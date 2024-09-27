@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\WorkTime;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class WorkTimeRepository
 {
@@ -22,5 +23,20 @@ class WorkTimeRepository
         return WorkTime::where('employee_id', $employeeId)
                        ->where('start_day', $start->toDateString())
                        ->exists();
+    }
+
+    public function getWorkTimes(string $employeeId, string $date): Collection
+    {
+        return WorkTime::where('employee_id', $employeeId)
+            ->where('start_day', Carbon::parse($date)->toDateString())
+            ->get();
+    }
+
+    public function getMonthlyWorkTimes(string $employeeId, string $date): Collection
+    {
+        return WorkTime::where('employee_id', $employeeId)
+            ->whereYear('start_day', Carbon::parse($date)->year)
+            ->whereMonth('start_day', Carbon::parse($date)->month)
+            ->get();
     }
 }
